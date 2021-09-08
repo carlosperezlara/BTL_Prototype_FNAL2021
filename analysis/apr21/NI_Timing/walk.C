@@ -1,12 +1,12 @@
 int walk(int run=44734 ) {
-  TList *list[5], *list2, *list3, *list3E;
-  TH2D     *enetim[2][5];
-  TProfile *enetimp[2][5];
-  TF1      *enetimf[2][5], *enetimfext[2][5];
+  TList *list[7], *list2, *list3, *list3E;
+  TH2D     *enetim[2][7];
+  TProfile *enetimp[2][7];
+  TF1      *enetimf[2][7], *enetimfext[2][7];
   list2 = (TList*) TFile::Open( Form("AnalysisOutput_%d.root",run) )->Get("output");
   list3 = (TList*) list2->FindObject( "timing" );
   list3E = (TList*) list2->FindObject( "energy" );
-  for(int ithr=0; ithr!=5; ++ithr) {
+  for(int ithr=0; ithr!=7; ++ithr) {
     list[ithr] = (TList*) list3->FindObject( Form("thr_%d",ithr) );
     enetim[0][ithr] = (TH2D*) list[ithr]->FindObject( Form("fTimingLE_%d",ithr) );
     enetim[1][ithr] = (TH2D*) list[ithr]->FindObject( Form("fTimingRE_%d",ithr) );
@@ -29,8 +29,8 @@ int walk(int run=44734 ) {
   }
 
   TCanvas *main = new TCanvas();
-  main->Divide(5,2);
-  for(int ithr=0; ithr!=5; ++ithr) {
+  main->Divide(7,2);
+  for(int ithr=0; ithr!=7; ++ithr) {
     main->cd(1+ithr);
     enetimp[0][ithr]->SetLineWidth(3);
     enetimp[0][ithr]->SetLineColor(kOrange-3);
@@ -41,7 +41,7 @@ int walk(int run=44734 ) {
     enetimfext[0][ithr]->SetParameter( 1, enetimf[0][ithr]->GetParameter(1) );
     enetimfext[0][ithr]->SetParameter( 2, enetimf[0][ithr]->GetParameter(2) );
     enetimfext[0][ithr]->Draw("same");
-    main->cd(6+ithr);
+    main->cd(8+ithr);
     enetimp[1][ithr]->SetLineWidth(3);
     enetimp[1][ithr]->SetLineColor(kOrange-3);
     enetim[1][ithr]->Draw("colz");
@@ -53,29 +53,29 @@ int walk(int run=44734 ) {
     enetimfext[1][ithr]->Draw("same");
   }
 
-  for(int ithr=0; ithr!=5; ++ithr)
+  for(int ithr=0; ithr!=7; ++ithr)
     cout << enetimf[0][ithr]->GetParameter(0) << ", ";
   cout << endl;
-  for(int ithr=0; ithr!=5; ++ithr)
+  for(int ithr=0; ithr!=7; ++ithr)
     cout << enetimf[0][ithr]->GetParameter(1) << ", ";
   cout << endl;
-  for(int ithr=0; ithr!=5; ++ithr)
+  for(int ithr=0; ithr!=7; ++ithr)
     cout << enetimf[0][ithr]->GetParameter(2) << ", ";
   cout << endl;
 
-  for(int ithr=0; ithr!=5; ++ithr)
+  for(int ithr=0; ithr!=7; ++ithr)
     cout << enetimf[1][ithr]->GetParameter(0) << ", ";
   cout << endl;
-  for(int ithr=0; ithr!=5; ++ithr)
+  for(int ithr=0; ithr!=7; ++ithr)
     cout << enetimf[1][ithr]->GetParameter(1) << ", ";
   cout << endl;
-  for(int ithr=0; ithr!=5; ++ithr)
+  for(int ithr=0; ithr!=7; ++ithr)
     cout << enetimf[1][ithr]->GetParameter(2) << ", ";
   cout << endl;
 
-  double xx[5] = {5,10,30,50,100};
-  double p0L[5], p1L[5], p2L[5], p0R[5], p1R[5], p2R[5];
-  for(int ithr=0; ithr!=5; ++ithr) {
+  double xx[7] = {5,10,15,20,30,50,100};
+  double p0L[7], p1L[7], p2L[7], p0R[7], p1R[7], p2R[7];
+  for(int ithr=0; ithr!=7; ++ithr) {
     p0L[ithr] = enetimf[0][ithr]->GetParameter(0);
     p1L[ithr] = enetimf[0][ithr]->GetParameter(1);
     p2L[ithr] = enetimf[0][ithr]->GetParameter(2);
@@ -92,8 +92,8 @@ int walk(int run=44734 ) {
   main2->Divide(1,3,0,0);
   main2->cd(1)->SetGridx(1);
   main2->cd(1)->SetGridy(1);
-  TGraph *gp0L = new TGraph(5,xx,p0L); gp0L->SetMarkerStyle(20); gp0L->SetMarkerColor(kRed-3);
-  TGraph *gp0R = new TGraph(5,xx,p0R); gp0R->SetMarkerStyle(20); gp0R->SetMarkerColor(kBlue-3);
+  TGraph *gp0L = new TGraph(7,xx,p0L); gp0L->SetMarkerStyle(20); gp0L->SetMarkerColor(kRed-3);
+  TGraph *gp0R = new TGraph(7,xx,p0R); gp0R->SetMarkerStyle(20); gp0R->SetMarkerColor(kBlue-3);
   gp0L->Draw("AP");
   gp0L->GetYaxis()->SetRangeUser(-2,0);
   gp0L->SetTitle(";Threshold  [mV];A  [ns]");
@@ -106,8 +106,8 @@ int walk(int run=44734 ) {
 
   main2->cd(2)->SetGridx(1);
   main2->cd(2)->SetGridy(2);
-  TGraph *gp1L = new TGraph(5,xx,p1L); gp1L->SetMarkerStyle(20); gp1L->SetMarkerColor(kRed-3);
-  TGraph *gp1R = new TGraph(5,xx,p1R); gp1R->SetMarkerStyle(20); gp1R->SetMarkerColor(kBlue-3);
+  TGraph *gp1L = new TGraph(7,xx,p1L); gp1L->SetMarkerStyle(20); gp1L->SetMarkerColor(kRed-3);
+  TGraph *gp1R = new TGraph(7,xx,p1R); gp1R->SetMarkerStyle(20); gp1R->SetMarkerColor(kBlue-3);
   gp1L->Draw("AP");
   gp1L->GetYaxis()->SetRangeUser(10,130);
   gp1L->SetTitle(";Threshold  [mV];B  [ns*mV]");
@@ -119,8 +119,8 @@ int walk(int run=44734 ) {
 
   main2->cd(3)->SetGridx(1);
   main2->cd(3)->SetGridy(2);
-  TGraph *gp2L = new TGraph(5,xx,p2L); gp2L->SetMarkerStyle(20); gp2L->SetMarkerColor(kRed-3);
-  TGraph *gp2R = new TGraph(5,xx,p2R); gp2R->SetMarkerStyle(20); gp2R->SetMarkerColor(kBlue-3);
+  TGraph *gp2L = new TGraph(7,xx,p2L); gp2L->SetMarkerStyle(20); gp2L->SetMarkerColor(kRed-3);
+  TGraph *gp2R = new TGraph(7,xx,p2R); gp2R->SetMarkerStyle(20); gp2R->SetMarkerColor(kBlue-3);
   gp2L->Draw("AP");
   gp2L->GetYaxis()->SetRangeUser(-100,-0.1);
   gp2L->SetTitle(";Threshold  [mV];C  [ns/mV^{9}]");

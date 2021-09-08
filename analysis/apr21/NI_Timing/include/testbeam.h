@@ -75,19 +75,19 @@ private:
   TH2D *fEnergyLR;
   TH2D *fEnergyAvgLR;
 
-  TH2D *fTimingNCvsCL[5];
-  TH2D *fTimingNCvsCR[5];
-  TH2D *fTimingLE[5];
-  TH2D *fTimingRE[5];
-  TH2D *fTimingLEC[5];
-  TH2D *fTimingREC[5];
-  TH2D *fTimingLR[5];
-  TH2D *fTimingX[5];
-  TH2D *fTimingXC[5];
-  TH1D *fTiming[5];
-  TH2D *fTimingX_P[5];
-  TH2D *fTimingXC_P[5];
-  TH1D *fTiming_P[5];
+  TH2D *fTimingNCvsCL[7];
+  TH2D *fTimingNCvsCR[7];
+  TH2D *fTimingLE[7];
+  TH2D *fTimingRE[7];
+  TH2D *fTimingLEC[7];
+  TH2D *fTimingREC[7];
+  TH2D *fTimingLR[7];
+  TH2D *fTimingX[7];
+  TH2D *fTimingXC[7];
+  TH1D *fTiming[7];
+  TH2D *fTimingX_P[7];
+  TH2D *fTimingXC_P[7];
+  TH1D *fTiming_P[7];
 
 };
 
