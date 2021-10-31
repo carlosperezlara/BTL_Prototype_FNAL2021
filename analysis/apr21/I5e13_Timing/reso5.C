@@ -55,24 +55,25 @@ int reso5() {
     format(grm34[irun],grp34[irun],color[irun%8]);
   }
   
-  TH2D *axis1 = new TH2D("axis1","#sigma_{BAR} = #sigma^{-} / 2;Threshold  [mV];Resolution  [ps]",100,0,50,100,0,300);
+  TH2D *axis1 = new TH2D("axis1","#sigma_{BAR} = #sigma^{-} / 2;Threshold  [mV];Resolution  [ps]",100,0,50,100,80,220);
   TH2D *axis2 = new TH2D("axis2","#sigma^{+} = #sqrt{#sigma^{2}_{BAR} + #sigma^{2}_{MCP}} ;Threshold  [mV];Resolution  [ps]",100,0,50,100,0,300);
 
   TCanvas *main = new TCanvas();
-  main->Divide(2,1);
+  //main->Divide(2,1);
 
-  TLegend * leg = new TLegend( 0.1, 0.7, 0.9, 0.9 );
+  TLegend * leg = new TLegend( 0.1, 0.28, 0.33, 0.9 );
   for(int irun=0; irun!=nruns; ++irun) {
-    leg->AddEntry( grm34[irun], Form("R%d %.1f C %0.1f mA", runs[irun],
-                                     0.5*(volts1[irun] + volts2[irun]),
-                                     0.5*(amp1[irun] + amp2[irun])) );
+    leg->AddEntry( grm34[irun], Form("R%d", runs[irun]) );
+    //leg->AddEntry( grm34[irun], Form("R%d %.1f C %0.1f mA", runs[irun],
+    //                                 0.5*(volts1[irun] + volts2[irun]),
+    //                                 0.5*(amp1[irun] + amp2[irun])) );
     cout << Form("R%d %.1f C %0.1f mA", runs[irun],
                  0.5*(volts1[irun] + volts2[irun]),
                  0.5*(amp1[irun] + amp2[irun])) << endl;
   }
   leg->SetNColumns(1);
 
-  main->cd(1);
+  //main->cd(1);
   axis1->Draw();
   for(int irun=0; irun!=nruns; ++irun)
     grm34[irun]->Draw("PLSAME");
@@ -80,14 +81,14 @@ int reso5() {
 
   TLatex *tex = new TLatex();
   tex->SetTextColor(kGray+1);
-  main->cd(2);
-  axis2->Draw();
-  for(int irun=0; irun!=nruns; ++irun)
-    grp34[irun]->Draw("PLSAME");
+  //main->cd(2);
+  //axis2->Draw();
+  //for(int irun=0; irun!=nruns; ++irun)
+  //  grp34[irun]->Draw("PLSAME");
 
-  tex->DrawLatexNDC(0.15,0.85,"Apr'21");
-  tex->DrawLatexNDC(0.15,0.80,"Irradiated. Fluence 5e13");
-  tex->DrawLatexNDC(0.15,0.75,"Approx #sigma_{MCP} 15 ps");
+  tex->DrawLatexNDC(0.35,0.85,"Apr'21");
+  tex->DrawLatexNDC(0.35,0.80,"Irradiated. Fluence 5e13");
+  tex->DrawLatexNDC(0.35,0.75,"Approx #sigma_{MCP} 15 ps");
   
   return 0;
 }

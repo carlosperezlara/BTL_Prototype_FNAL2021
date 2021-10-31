@@ -8,6 +8,8 @@ void format(TGraph *a, TGraph *b, int color){
   b->SetMarkerColor( color );
   a->SetMarkerStyle(20);
   b->SetMarkerStyle(20);
+  a->SetMarkerSize(2.0);
+  b->SetMarkerSize(2.0);
 }
 //==================
 void loadarrays(TString file) {
@@ -23,7 +25,7 @@ void loadarrays(TString file) {
     sigmaP[i] = 0;
     fin >> sigmaP[i] >> sigmaP[i];
     sigmaP[i] *= 1e3;
-    sigmaP[i] = sqrt(sigmaP[i]*sigmaP[i]-50*50);
+    //sigmaP[i] = sqrt(sigmaP[i]*sigmaP[i]-50*50);
   }
 }
 //==================
@@ -49,21 +51,29 @@ int reso() {
     format(grm34[irun],grp34[irun],color[irun]);
   }
   
-  TH2D *axis1 = new TH2D("axis1","#sigma_{BAR} = #sigma^{-} / 2;Threshold  [mV];Resolution  [ps]",100,0,50,100,80,160);
-  TH2D *axis2 = new TH2D("axis2","#sigma^{+} = #sqrt{#sigma^{2}_{BAR} + #sigma^{2}_{MCP}} ;Threshold  [mV];Resolution  [ps]",100,0,50,100,80,160);
+  TH2D *axis1 = new TH2D("axis1","#sigma_{BAR} = #sigma^{-} / 2;Threshold  [mV];Resolution  [ps]",100,10,45,100,85,120);
+  TH2D *axis2 = new TH2D("axis2","#sigma^{+} = #sqrt{#sigma^{2}_{BAR} + #sigma^{2}_{MCP}} ;Threshold  [mV];Resolution  [ps]",100,10,45,100,95,160);
 
   TCanvas *main = new TCanvas();
   main->Divide(2,1);
 
-  TLegend * leg = new TLegend( 0.1, 0.7, 0.9, 0.9 );
-  leg->AddEntry( grm34[0], "R44734  -18.1 C" );
-  leg->AddEntry( grm34[1], "R44733  -17.7 C" );
-  leg->AddEntry( grm34[2], "R44731  -17.7 C" );
-  leg->AddEntry( grm34[3], "R44727  -16.5 C" );
-  leg->AddEntry( grm34[4], "R44725  -16.5 C" );
-  leg->AddEntry( grm34[5], "R44730  -18.1 C" );
-  leg->AddEntry( grm34[6], "R44728  -17.9 C" );
-  leg->AddEntry( grm34[7], "R44732  -17.8 C" );
+  TLegend * leg = new TLegend( 0.1, 0.6, 0.6, 0.9 );
+  leg->AddEntry( grm34[0], "R44734" );
+  leg->AddEntry( grm34[1], "R44733" );
+  leg->AddEntry( grm34[2], "R44731" );
+  leg->AddEntry( grm34[3], "R44727" );
+  leg->AddEntry( grm34[4], "R44725" );
+  leg->AddEntry( grm34[5], "R44730" );
+  leg->AddEntry( grm34[6], "R44728" );
+  leg->AddEntry( grm34[7], "R44732" );
+  //leg->AddEntry( grm34[0], "R44734  -18.1 C" );
+  //leg->AddEntry( grm34[1], "R44733  -17.7 C" );
+  //leg->AddEntry( grm34[2], "R44731  -17.7 C" );
+  //leg->AddEntry( grm34[3], "R44727  -16.5 C" );
+  //leg->AddEntry( grm34[4], "R44725  -16.5 C" );
+  //leg->AddEntry( grm34[5], "R44730  -18.1 C" );
+  //leg->AddEntry( grm34[6], "R44728  -17.9 C" );
+  //leg->AddEntry( grm34[7], "R44732  -17.8 C" );
   leg->SetNColumns(2);
 
   main->cd(1);
@@ -82,8 +92,9 @@ int reso() {
   tex->DrawLatexNDC(0.15,0.85,"Apr'21");
   tex->DrawLatexNDC(0.15,0.80,"Irradiated. Fluence 5e13");
   tex->DrawLatexNDC(0.15,0.75,"V_{op} LEFT 39.4 V  RIGHT 39.5 V");
-  tex->DrawLatexNDC(0.15,0.70,"Approx temperature -18 C");
-  tex->DrawLatexNDC(0.15,0.65,"Approx #sigma_{MCP} 15 ps");
+  tex->DrawLatexNDC(0.15,0.70,"Logbook Temp_{LEFT} [-18.0,-17.0] C");
+  tex->DrawLatexNDC(0.15,0.65,"Logbook Temp_{RIGHT} [-18.4,-16.0] C");
+  //tex->DrawLatexNDC(0.15,0.65,"Approx #sigma_{MCP} 15 ps");
   
   return 0;
 }

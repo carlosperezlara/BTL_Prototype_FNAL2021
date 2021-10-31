@@ -1,7 +1,26 @@
+TF1 *gainenf;
+
+void LoadGain() {
+  TFile *rfile = new TFile("sipm_spec_input_HDR2-015-v2-1e13.root");
+  rfile->ls();
+  TF1 *gai = (TF1*) rfile->Get("fGain_vs_OV");
+  cout << gai->GetFormula()->GetExpFormula() << endl;
+  double p0G = gai->GetParameter(0);
+  double p1G = gai->GetParameter(1);
+  TF1 *enf = (TF1*) rfile->Get("fENF_vs_OV");
+  double p0E = enf->GetParameter(0);
+  double p1E = enf->GetParameter(1);
+  gainenf = new TF1("gainenf",Form("(%f+x*%f)*(1+%f*x+%f*x*x)",p0G,p1G,p0E,p1E),0,10);
+}
+
 //==================
 int drawamplitudes() {
   gStyle->SetOptStat(0);
-
+  LoadGain();
+  TFile *dcrfile = new TFile("DCR_HDR2-5e13.root");
+  TCanvas *dcrcanvas = (TCanvas*) dcrfile->Get("c1_n2");
+  dcrcanvas->Draw();
+  
   const int nruns = 12;
   int runs[nruns] = {44688, 44694, 44695, 44697, 44702, 44704, 44705, 44706, 44707, 44708, 44711, 44713};
   float volts1[nruns] = {40.00, 38.50, 39.00, 39.40, 39.40, 39.40, 39.40, 39.60, 39.60, 40.10, 40.30, 40.50};
@@ -17,6 +36,9 @@ int drawamplitudes() {
   double vol[nruns];
   double amp[nruns];
   double vov[nruns];
+  double vov_corr[nruns];
+  double tem_corr[nruns];
+  double dcr[nruns];
   
   int color[8] = {kBlack, kRed-3, kBlue-3, kCyan-3, kGreen-3, kYellow-3, kOrange-3, kMagenta-3};
 
@@ -31,27 +53,64 @@ int drawamplitudes() {
     vov[irun] = vol[irun];
     vov[irun] -= amp[irun]*141*1e-3;
     vov[irun] -= ( 38.55 + 0.0378*tem[irun] );
+
+    vov_corr[irun] = 3./220.*mpv[irun];
+    tem_corr[irun] = tem[irun] + (vov[irun]-vov_corr[irun])/0.0378;
+    dcr[irun] = amp[irun] * 1e-3 / (1.6e-19) / gainenf->Eval( vov_corr[irun] ) * 1e-9;
   }
 
   TGraph *grTEM = new TGraph( nruns, tem, mpv );
   TGraph *grAMP = new TGraph( nruns, amp, mpv );
   TGraph *grVOL = new TGraph( nruns, vol, mpv );
   TGraph *grVOV = new TGraph( nruns, vov, mpv );
+  TGraph *grDCR = new TGraph( nruns, vov, amp );
+  TGraph *grVOVcorr = new TGraph( nruns, vov_corr, mpv );
+  TGraph *grTEMcorr = new TGraph( nruns, tem_corr, mpv );
+  TGraph *grDCRcorr = new TGraph( nruns, vov_corr, amp );
+  TGraph *grDCRfin = new TGraph( nruns, vov_corr, dcr );
 
+  TH2D *agrVOV = new TH2D("agrVOV",";VoV;MPV",100,-1,3.5,100,0,300);
+  TH2D *agrTEM = new TH2D("agrTEM",";Temperature;MPV",100,-35,30,100,0,300);
+  TH2D *agrDCR = new TH2D("agrDCR",";VoV;Current (mA)",100,0,3,100,0,4);
+  TLine *lin = new TLine();
 
   new TCanvas();
-  grTEM->Draw("A*");
+  agrTEM->Draw();
+  grTEMcorr->SetMarkerStyle(24);
+  grTEMcorr->SetMarkerColor(kRed-3);
+  grTEM->Draw("SAME*");
+  grTEMcorr->Draw("SAMEP");
+
   new TCanvas();
   grAMP->Draw("A*");
+
   new TCanvas();
   grVOL->Draw("A*");
-  new TCanvas();
-  grVOV->Draw("A*");
 
+  new TCanvas();
+  agrVOV->Draw();
+  grVOV->Draw("SAME*");
+  lin->DrawLine(0,0,3,220);
+  grVOVcorr->SetMarkerStyle(24);
+  grVOVcorr->SetMarkerColor(kRed-3);
+  grVOVcorr->Draw("SAMEP");
+
+  new TCanvas();
+  agrDCR->Draw();
+  grDCR->Draw("SAME*");
+  grDCRcorr->SetMarkerStyle(24);
+  grDCRcorr->SetMarkerColor(kRed-3);
+  grDCRcorr->Draw("SAMEP");
+
+  
   TLatex *tex = new TLatex();
+  tex->SetTextSize(0.03);
+  tex->SetTextColor(kRed-3);
+
   grTEM->GetXaxis()->SetTitle("Temperature");
   grTEM->GetYaxis()->SetTitle("MPV");
   for(int irun=0; irun!=nruns; ++irun) {
+    tex->DrawLatex( vov_corr[irun], amp[irun], Form("%.1f",tem_corr[irun]) );
   }
   
   grAMP->GetXaxis()->SetTitle("Current");
@@ -60,8 +119,16 @@ int drawamplitudes() {
   grVOL->GetXaxis()->SetTitle("Volts");
   grVOL->GetYaxis()->SetTitle("MPV");
 
-  grVOV->GetXaxis()->SetTitle("VoV");
-  grVOV->GetYaxis()->SetTitle("MPV");
+  dcrcanvas->cd();
+  grDCRfin->Draw("PSAME");
+  grDCRfin->SetMarkerStyle(20);
+  grDCRfin->SetMarkerSize(2.5);
+  grDCRfin->SetMarkerColorAlpha(kBlack,0.5);
+  tex->SetTextColor(kBlack);
+  tex->SetTextSize(0.01);
+  for(int irun=0; irun!=nruns; ++irun) {
+    tex->DrawLatex( vov_corr[irun]+0.02, dcr[irun], Form("R%d  %.1f C",runs[irun],tem_corr[irun]) );
+  }
 
   return 0;
 }

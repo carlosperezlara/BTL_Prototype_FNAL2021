@@ -33,13 +33,13 @@ if(fRun==44695) {
   }
   //--------------------------2
   if(fDelay==2) {
-    fThresholds[0] = -15;
+    fThresholds[0] = -10;
     fThresholds[1] = -17;
     fThresholds[2] = -20;
     fThresholds[3] = -25;
     fThresholds[4] = -30;
-    fThresholds[5] = -35;
-    fThresholds[6] = -40;
+    fThresholds[5] = -40;
+    fThresholds[6] = -50;
   }
   //--------------------------5
   if(fDelay==5) {
